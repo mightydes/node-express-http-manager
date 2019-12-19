@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "name": "node-express-http-manager",
+  "description": "ExpressJS Http Connections Manager",
+  "keywords": [
+    "http client",
+    "express",
+    "connection manager"
+  ],
+  "author": {
+    "name": "Lev Nazarenko",
+    "email": "lynazarenko@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com:mightydes/node-express-http-manager.git"
+  },
+  "homepage": "https://github.com/mightydes/node-express-http-manager",
+  "bugs": {
+    "url": "https://github.com/mightydes/node-express-http-manager/issues"
+  },
+  "license": "MIT",
+  "main": "src/index.js",
+  "dependencies": {
+    "axios": "^0.19",
+    "debug": "^2.3",
+    "responselike": "^1.0"
+  },
+  "devDependencies": {}
+}
