@@ -2,6 +2,7 @@
 
 ExpressJS Http Connections Manager
 
+---
 ## Usage
 
 ```js

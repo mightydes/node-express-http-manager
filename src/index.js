@@ -66,30 +66,17 @@ class HttpConnection {
         };
         debug(`pass ${this.connectionKey}:`, requestOpt.url);
 
-        if (this.connectionOptions.json) {
-            return this.passJson(req, res, requestOpt);
+        if (this.isBodyAvailable(method) && req.body) {
+            if (Buffer.isBuffer(req.body)) {
+                requestOpt.data = req.body;
+            } else if (typeof req.body === 'string') {
+                requestOpt.data = Buffer.from(req.body, 'utf8');
+            } else {
+                requestOpt.data = Buffer.from(JSON.stringify(req.body), 'utf8');
+            }
+            requestOpt.headers['content-length'] = requestOpt.data.length;
         }
 
-        if (!this.isBodyAvailable(method)) {
-            return this.__pass(req, res, requestOpt);
-        }
-
-        if (req.is('multipart/form-data') || req.is('application/x-www-form-urlencoded')) {
-            requestOpt.data = req.body;
-            return this.__pass(req, res, requestOpt);
-        }
-
-        return this.passJson(req, res, requestOpt);
-    }
-
-    /**
-     * @private
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Object} requestOpt
-     * @returns {*}
-     */
-    __pass(req, res, requestOpt) {
         return axios(requestOpt)
             .then((response) => {
                 res.set(response.headers);
@@ -101,24 +88,6 @@ class HttpConnection {
                 res.status(rejection.response.status);
                 return rejection.response.data.pipe(res)
             });
-    }
-
-    /**
-     * @private
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Object} requestOpt
-     * @returns {*}
-     */
-    passJson(req, res, requestOpt) {
-        const body = new Buffer(JSON.stringify(req.body || {}));
-        if (!this.isBodyAvailable(requestOpt.method)) {
-            requestOpt.method = 'POST';
-        }
-        requestOpt.headers['content-type'] = HttpManager.JSON_CONTENT_TYPE;
-        requestOpt.headers['content-length'] = body.length;
-        requestOpt.data = body;
-        return this.__pass(req, res, requestOpt);
     }
 
     /**
