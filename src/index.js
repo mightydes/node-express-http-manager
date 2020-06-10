@@ -39,6 +39,10 @@ class HttpConnection {
             requestOpt.headers['content-type'] = HttpManager.JSON_CONTENT_TYPE;
             requestOpt.headers['content-length'] = body.length;
 
+            if (typeof this.connectionOptions.beforePost === 'function') {
+                this.connectionOptions.beforePost(requestOpt);
+            }
+
             return axios(requestOpt)
                 .then((response) => resolve(
                     new Response(response.status, response.headers, response.data, url)
@@ -56,17 +60,21 @@ class HttpConnection {
      * @returns {*}
      */
     pass(req, res, options = {}) {
-        const method = req.method.toUpperCase();
+        const origMethod = req.method.toUpperCase();
         let requestOpt = {
             url: this.connectionOptions.location + req.originalUrl,
-            method: method,
+            method: origMethod,
             maxRedirects: 0,
             responseType: 'stream',
             headers: req.headers
         };
         debug(`pass ${this.connectionKey}:`, requestOpt.url);
 
-        if (this.isBodyAvailable(method) && req.body) {
+        if (typeof this.connectionOptions.beforePass === 'function') {
+            this.connectionOptions.beforePass(requestOpt);
+        }
+
+        if (this.isBodyAvailable(requestOpt.method) && req.body) {
             if (Buffer.isBuffer(req.body)) {
                 requestOpt.data = req.body;
             } else if (typeof req.body === 'string') {

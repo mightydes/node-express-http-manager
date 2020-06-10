@@ -45,3 +45,35 @@ function performHttpConnections() {
 }
 
 ```
+
+---
+## Methods
+
+*   `new HttpManager(connectionKey, connectionOptions)` -- create new _HttpManager_ instance and set default `connectionKey` connection.
+
+*   `addConnection(connectionKey, connectionOptions)` -- register `connectionKey` connection.
+
+*   `setDefaultConnection(connectionKey)` -- set default `connectionKey` connection.
+
+*   `statConnection(connectionKey = null)` -- get `connectionOptions` of _default_ or `connectionKey` connection.
+
+*   `connection(connectionKey = null)` -- get `HttpConnection` instance of _default_ or `connectionKey` connection.
+
+---
+## Connection Options
+
+*   _string_ `location` -- mandatory location address, for example `http://127.0.0.1:4000`.
+
+*   _function_ `beforePost` -- sync _post_ request interceptor:
+    ```js
+    {
+        beforePost: (requestOpt) => {/* do something with 'requestOpt' */}
+    }
+    ```
+
+*   _function_ `beforePass` -- sync _pass_ request interceptor:
+    ```js
+    {
+        beforePass: (requestOpt) => {/* do something with 'requestOpt' */}
+    }
+    ```
