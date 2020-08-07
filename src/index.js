@@ -87,13 +87,21 @@ class HttpConnection {
 
         return axios(requestOpt)
             .then((response) => {
-                res.set(response.headers);
-                res.status(response.status);
+                if (response) {
+                    if ('headers' in response) {
+                        res.set(response.headers);
+                    }
+                    res.status('status' in response ? response.status : 500);
+                }
                 return response.data.pipe(res);
             })
             .catch((rejection) => {
-                res.set(rejection.response.headers);
-                res.status(rejection.response.status);
+                if (rejection && 'response' in rejection && rejection.response) {
+                    if ('headers' in rejection.response) {
+                        res.set(rejection.response.headers);
+                    }
+                    res.status('status' in rejection.response ? rejection.response.status : 500);
+                }
                 return rejection.response.data.pipe(res)
             });
     }
