@@ -96,13 +96,18 @@ class HttpConnection {
                 return response.data.pipe(res);
             })
             .catch((rejection) => {
+                let hasData = false;
                 if (rejection && 'response' in rejection && rejection.response) {
                     if ('headers' in rejection.response) {
                         res.set(rejection.response.headers);
                     }
                     res.status('status' in rejection.response ? rejection.response.status : 500);
+                    hasData = 'data' in rejection.response && rejection.response.data;
                 }
-                return rejection.response.data.pipe(res)
+                if (hasData) {
+                    return rejection.response.data.pipe(res);
+                }
+                return res.status(500).send(rejection ? rejection : `Bad Rejection Argument!`);
             });
     }
 
